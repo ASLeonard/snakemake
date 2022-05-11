@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.7.0](https://www.github.com/snakemake/snakemake/compare/v7.6.2...v7.7.0) (2022-05-11)
+
+
+### Features
+
+* LockException ([#1276](https://www.github.com/snakemake/snakemake/issues/1276)) ([f5e6fa6](https://www.github.com/snakemake/snakemake/commit/f5e6fa68a68640ed39df86c256d676f2e4efddfc))
+
+
+### Documentation
+
+* singularity sometimes uses system /tmp explanation ([#1588](https://www.github.com/snakemake/snakemake/issues/1588)) ([170c1d9](https://www.github.com/snakemake/snakemake/commit/170c1d9d92de4cafc0da9567a6970b173161c7da))
+
 ### [7.6.2](https://www.github.com/snakemake/snakemake/compare/v7.6.1...v7.6.2) (2022-05-06)
 
 
