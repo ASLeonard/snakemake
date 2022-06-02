@@ -604,7 +604,11 @@ class DAG:
             for j in job:
                 self.handle_temp(j)
             return
-        is_temp = lambda f: is_flagged(f, "temp") and f.flags["temp"] <= self.notemp
+        is_temp = (
+            lambda f: (is_flagged(f, "temp") and f.flags["temp"] <= self.notemp)
+            if isinstance(self.notemp, float)
+            else (is_flagged(f, "temp") and f.flags["temp"] not in self.notemp)
+        )
 
         # handle temp input
         needed = lambda job_, f: any(
@@ -2143,7 +2147,12 @@ class DAG:
         for job in self.jobs:
             for f in job.output:
                 if not only_temp or (
-                    is_flagged(f, "temp") and f.flags["temp"] <= self.notemp
+                    is_flagged(f, "temp")
+                    and (
+                        f.flags["temp"] <= self.notemp
+                        if isinstance(self.notemp, float)
+                        else f.flags["temp"] not in self.notemp
+                    )
                 ):
                     # The reason for the second check is that dangling
                     # symlinks fail f.exists.

@@ -1888,9 +1888,7 @@ def get_argument_parser(profile=None):
     group_behavior.add_argument(
         "--notemp",
         "--nt",
-        nargs="?",
-        const=-math.inf,
-        action="store",
+        nargs="*",
         default=math.inf,
         type=float,
         help="Ignore temp() declarations. This is useful when running only "
@@ -2599,6 +2597,12 @@ def main(argv=None):
             file=sys.stderr,
         )
         sys.exit(1)
+
+    if isinstance(args.notemp, list):
+        if len(args.notemp) == 0:
+            args.notemp = -math.inf
+        elif len(args.notemp) == 1:
+            args.notemp = args.notemp[0]
 
     if (args.conda_prefix or args.conda_create_envs_only) and not args.use_conda:
         print(
