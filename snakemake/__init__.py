@@ -622,8 +622,6 @@ def snakemake(
         if not print_compilation:
             if lint:
                 success = not workflow.lint(json=lint == "json")
-            elif containerize:
-                workflow.containerize()
             elif listrules:
                 workflow.list_rules()
             elif list_target_rules:
@@ -809,6 +807,7 @@ def snakemake(
                     export_cwl=export_cwl,
                     batch=batch,
                     keepincomplete=keep_incomplete,
+                    containerize=containerize,
                 )
 
     except BrokenPipeError:
@@ -1079,7 +1078,7 @@ def get_argument_parser(profile=None):
                         line options in YAML format. For example,
                         '--cluster qsub' becomes 'cluster: qsub' in the YAML
                         file. Profiles can be obtained from
-                        https://github.com/snakemake-profiles. 
+                        https://github.com/snakemake-profiles.
                         The profile can also be set via the environment variable $SNAKEMAKE_PROFILE.
                         """.format(
             dirs.site_config_dir, dirs.user_config_dir
@@ -2447,10 +2446,6 @@ def main(argv=None):
     parser = get_argument_parser()
     args = parser.parse_args(argv)
 
-    if args.quiet is not None and len(args.quiet) == 0:
-        # default case, set quiet to progress and rule
-        args.quiet = ["progress", "rules"]
-
     if args.profile:
         # reparse args while inferring config file from profile
         parser = get_argument_parser(args.profile)
@@ -2480,6 +2475,10 @@ def main(argv=None):
                 setattr(args, key, adjust_path(getattr(args, key)))
         if args.report_stylesheet:
             args.report_stylesheet = adjust_path(args.report_stylesheet)
+
+    if args.quiet is not None and len(args.quiet) == 0:
+        # default case, set quiet to progress and rule
+        args.quiet = ["progress", "rules"]
 
     if args.bash_completion:
         cmd = b"complete -o bashdefault -C snakemake-bash-completion snakemake"
