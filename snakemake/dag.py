@@ -34,7 +34,7 @@ from snakemake.exceptions import PeriodicWildcardError
 from snakemake.exceptions import RemoteFileException, WorkflowError, ChildIOException
 from snakemake.exceptions import InputFunctionException
 from snakemake.logging import logger
-from snakemake.common import DYNAMIC_FILL, ON_WINDOWS, group_into_chunks, is_local_file
+from snakemake.common import DYNAMIC_FILL, ON_WINDOWS, group_into_chunks, is_local_file, TBDString
 from snakemake.deployment import singularity
 from snakemake.output_index import OutputIndex
 from snakemake import workflow
@@ -2462,14 +2462,15 @@ class DAG:
         max_threads = defaultdict(int)
         min_threads = defaultdict(lambda: sys.maxsize)
         for job in chain(self.needrun_jobs(), self.finished_jobs):
-            max_threads[job.rule] = max(max_threads[job.rule], job.threads)
-            min_threads[job.rule] = min(min_threads[job.rule], job.threads)
+            if job.threads != TBDString():
+                max_threads[job.rule] = max(max_threads[job.rule], job.threads)
+                min_threads[job.rule] = min(min_threads[job.rule], job.threads)
         rows = [
             {
                 "job": rule.name,
                 "count": count,
-                "min threads": min_threads[rule],
-                "max threads": max_threads[rule],
+                "min threads": min_threads[rule] if rule in min_threads else TBDString(),
+                "max threads": max_threads[rule] if rule in max_threads else TBDString(),
             }
             for rule, count in sorted(
                 rules.most_common(), key=lambda item: item[0].name
